@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: eshop
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  streamlit:
+    build: .
+    depends_on:
+      - mongo
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./:/app
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/eshop
+    command: streamlit run app.py --server.port 8501 --server.address 0.0.0.0
+
+volumes:
+  mongo_data:
+
